@@ -30,4 +30,14 @@ class ThreadsController extends Controller
     {
         return view('threads.index');
     }
+
+    /**
+     * @Get("/{id}")
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function show()
+    {
+        return view('threads.show');
+    }
 }

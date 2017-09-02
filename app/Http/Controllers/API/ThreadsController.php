@@ -18,7 +18,13 @@ class ThreadsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check.token');
+        $this->middleware('check.token', [
+            'except' => [
+                'index',
+                'show',
+            ]
+        ]);
+
     }
 
 
@@ -84,7 +90,7 @@ class ThreadsController extends Controller
         $thread = new Thread();
         $thread->title = $request->get('title');
         $thread->desc = $request->get('desc');
-        $thread->user()->attach($user->id);
+        $thread->user_id = $user->id;
         $thread->save();
 
         return response()->json([
@@ -98,7 +104,9 @@ class ThreadsController extends Controller
 
     /**
      * @Delete("/{id}")
+     * @param Request $request
      * @param $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Request $request, $id)
     {
