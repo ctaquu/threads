@@ -21,7 +21,12 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-//        $this->middleware('guest')->except('logout');
+        $this->middleware('check.token', [
+            'except' => [
+                'register',
+                'login',
+            ]
+        ]);
     }
 
 
@@ -59,7 +64,7 @@ class AuthController extends Controller
                 'new user created',
             ],
             'content' => [
-                'token' => $token,
+                'user' => $user,
             ]
         ], Response::HTTP_CREATED);
     }
@@ -72,15 +77,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-//        dd(json_decode($request->getContent(), true));
-//        $x = json_decode($request->getContent(), true);
-        $x = $request->all();
-
-//        return response()->json([
-//            'error' => true,
-//            'messages' => $x,
-//        ], Response::HTTP_OK);
-
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
@@ -105,6 +101,9 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
+        $user->token = sha1(rand(100000000000000, 999999999999999));
+        $user->save();
+
         return response()->json([
             'error' => false,
             'messages' => [
@@ -112,6 +111,29 @@ class AuthController extends Controller
             ],
             'content' => [
                 'user' => $user,
+            ],
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Get("logout")
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        $user = User::where([
+            'token' => $request->get('token'),
+        ])->first();
+
+        $user->token = "logged_out";
+        $user->save();
+
+        return response()->json([
+            'error' => false,
+            'messages' => [
+                'logged out!',
             ],
         ], Response::HTTP_OK);
     }

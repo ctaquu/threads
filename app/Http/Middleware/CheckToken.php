@@ -26,7 +26,9 @@ class CheckToken
 
         $user = User::where([
             'token' => $request->get('token'),
-        ])->first();
+        ])
+            ->where('token', '!=', 'logged_out')
+            ->first();
 
         if (empty($user)) {
             return response()->json([

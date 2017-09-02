@@ -90,8 +90,9 @@
                         "password": $(" #password ").val(),
                     }
                 })
-                    .done(function () {
-                        console.log('success');
+                    .done(function (data) {
+                        localStorage.setItem('token', data.content.user.token);
+                        window.location.replace("threads");
                     })
                     .fail(function (e, x, m) {
                     })

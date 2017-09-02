@@ -36,15 +36,11 @@ class ThreadsController extends Controller
      */
     public function index(Request $request)
     {
-        $user = User::where([
-            'token' => $request->get('token'),
-        ])->first();
-
         return response()->json([
             'error' => false,
             'messages' => [],
             'content' => [
-                'threads' => $user->threads,
+                'threads' => Thread::all(),
             ]
         ], Response::HTTP_CREATED);
     }
