@@ -11,7 +11,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <ul>
+                        <ul id="thread_list">
                             <li>one</li>
                             <li>two</li>
                         </ul>
@@ -25,6 +25,35 @@
 @section('scripts')
     <script>
         $(document).ready(function (ee) {
+
+            $token = localStorage.getItem('token');
+
+            console.log($token);
+
+            if (!$token) {
+                window.location.replace("login");
+            }
+
+            $.ajax({
+                url: "api/threads?token=" + $token,
+                type: "GET"
+            })
+                .done(function (data) {
+
+                    $.each( data.content.threads, function( key, thread ) {
+                        $(" #thread_list ").append(
+                            '<a href="">' + thread.title + '</a>'
+                        );
+                    });
+
+                    console.log('success');
+                })
+                .fail(function (e, x, m) {
+                    console.log('fail');
+                })
+                .always(function () {
+                    console.log('done');
+                });
 
         });
     </script>

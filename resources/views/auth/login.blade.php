@@ -73,7 +73,7 @@
             $(" #btn_submit ").click(function (e) {
                 e.preventDefault();
                 $.ajax({
-                    url: "authorization/login",
+                    url: "api/authorization/login",
                     type: "POST",
                     dataType: "json",
                     data: {

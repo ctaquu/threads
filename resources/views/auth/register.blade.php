@@ -82,7 +82,7 @@
             $(" #btn_submit ").click(function (e) {
                 e.preventDefault();
                 $.ajax({
-                    url: "authorization/register",
+                    url: "api/authorization/register",
                     type: "POST",
                     dataType: "json",
                     data: {

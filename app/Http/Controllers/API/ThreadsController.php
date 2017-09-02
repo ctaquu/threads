@@ -5,19 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
- * Class AuthController
  *
- * @Controller(prefix="api/authorization")
+ * @Controller(prefix="api/threads")
  *
- * @package App\Http\Controllers\Auth
  */
-class AuthController extends Controller
+class ThreadsController extends Controller
 {
     public function __construct()
     {
@@ -26,16 +22,15 @@ class AuthController extends Controller
 
 
     /**
-     * @Post("register")
+     * @Get("")
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request)
+    public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|unique:users',
-            'password' => 'required',
+            'token' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -45,21 +40,24 @@ class AuthController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $token = sha1(rand(100000000000000, 999999999999999));
+        $user = User::where([
+            'token' => $request->get('token'),
+        ])->first();
 
-        $user = new User();
-        $user->email = $request->get('email');
-        $user->password = sha1($request->get('password'));
-        $user->token = $token;
-        $user->save();
+        if (empty($user)) {
+            return response()->json([
+                'error' => true,
+                'messages' => [
+                    'invalid token',
+                ]
+            ], Response::HTTP_UNAUTHORIZED);
+        }
 
         return response()->json([
             'error' => false,
-            'messages' => [
-                'new user created',
-            ],
+            'messages' => [],
             'content' => [
-                'token' => $token,
+                'threads' => $user->threads,
             ]
         ], Response::HTTP_CREATED);
     }
@@ -72,15 +70,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-//        dd(json_decode($request->getContent(), true));
-//        $x = json_decode($request->getContent(), true);
-        $x = $request->all();
-
-//        return response()->json([
-//            'error' => true,
-//            'messages' => $x,
-//        ], Response::HTTP_OK);
-
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
