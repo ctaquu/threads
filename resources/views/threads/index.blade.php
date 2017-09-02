@@ -26,16 +26,8 @@
     <script>
         $(document).ready(function (ee) {
 
-            $token = localStorage.getItem('token');
-
-            console.log($token);
-
-            if (!$token) {
-                window.location.replace("login");
-            }
-
             $.ajax({
-                url: "api/threads?token=" + $token,
+                url: "api/threads?token=" + localStorage.getItem('token'),
                 type: "GET"
             })
                 .done(function (data) {
@@ -45,14 +37,11 @@
                             '<a href="">' + thread.title + '</a>'
                         );
                     });
-
-                    console.log('success');
                 })
                 .fail(function (e, x, m) {
-                    console.log('fail');
+                    window.location.replace("login");
                 })
                 .always(function () {
-                    console.log('done');
                 });
 
         });
