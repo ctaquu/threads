@@ -72,6 +72,14 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+//        dd(json_decode($request->getContent(), true));
+//        $x = json_decode($request->getContent(), true);
+        $x = $request->all();
+
+//        return response()->json([
+//            'error' => true,
+//            'messages' => $x,
+//        ], Response::HTTP_OK);
 
         $validator = Validator::make($request->all(), [
             'email' => 'required',
