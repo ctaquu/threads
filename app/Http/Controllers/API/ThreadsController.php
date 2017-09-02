@@ -18,6 +18,7 @@ class ThreadsController extends Controller
     public function __construct()
     {
 //        $this->middleware('guest')->except('logout');
+        $this->middleware('check.token');
     }
 
 
@@ -63,45 +64,31 @@ class ThreadsController extends Controller
     }
 
     /**
-     * @Post("login")
+     * @Get("{$thread}")
      *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param $thread
      */
-    public function login(Request $request)
+    public function show($thread)
+    {
+        
+    }
+
+    /**
+     * @Post("")
+     */
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'email' => 'required|unique:users',
             'password' => 'required',
         ]);
+    }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => true,
-                'messages' => $validator->errors()
-            ], Response::HTTP_BAD_REQUEST);
-        }
+    /**
+     * @Delete("$thread")
+     */
+    public function destroy()
+    {
 
-        $user = User::where([
-            'email' => $request->get('email'),
-            'password' => sha1($request->get('password')),
-        ])->first();
-
-        if (empty($user)) {
-            return response()->json([
-                'error' => true,
-                'messages' => $validator->errors()
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-
-        return response()->json([
-            'error' => false,
-            'messages' => [
-                'logged in!',
-            ],
-            'content' => [
-                'user' => $user,
-            ],
-        ], Response::HTTP_OK);
     }
 }
