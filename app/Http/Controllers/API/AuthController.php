@@ -97,13 +97,14 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        Auth::login($user);
-
         return response()->json([
             'error' => false,
             'messages' => [
                 'logged in!',
-            ]
+            ],
+            'content' => [
+                'user' => $user,
+            ],
         ], Response::HTTP_OK);
     }
 }
